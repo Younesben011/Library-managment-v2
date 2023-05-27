@@ -1,0 +1,16 @@
+.root{
+    /*-fx-background-color: linear-gradient(to top, #ff7f50, #6a5acd);*/
+    background-color: red;
+}
+.btn{
+    border-color: red;
+}
+.btn:hover{
+    -fx-effect: dropshadow(gaussian, rgba(248, 4, 4, 0.78), 6, 0, 0, 0);
+    -fx-border-width: 1;
+    -fx-border-color: #3f3f3f;
+}
+.main{
+    background-color: red;
+
+}

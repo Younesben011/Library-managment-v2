@@ -1,0 +1,194 @@
+.prim_container{
+    /*-fx-background-color: red;*/
+    -fx-pref-width: 1000;
+    -fx-pref-height: 500;
+    -fx-padding: 0 20px 0 0 ;
+    -fx-alignment: center-left;
+}
+.container{
+    /*-fx-background-color: black;*/
+    -fx-pref-width: 260;
+
+}
+.IssdateBox{
+    -fx-pref-width: 260;
+
+}
+.text-field{
+    -fx-pref-height:30 ;
+}
+.password-field{
+    -fx-pref-height:30 ;
+
+}
+.infoBox{
+    -fx-max-height:320;
+    -fx-max-width: 300;
+    -fx-pref-height:320;
+    -fx-pref-width: 300;
+    -fx-background-color:#EFEFEF;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 7, 0, 0, 0);
+    -fx-border-width: 2;
+    -fx-border-color: rgba(78, 160, 234, 0.35);
+    -fx-border-radius: 10;
+
+}
+.title{
+    -fx-font-size: 16 ;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(0, 0, 0, 0.8);
+}
+.Empty{
+    -fx-font-size: 16 ;
+    -fx-font-weight: bold;
+-fx-text-fill: rgba(68, 68, 68, 0.57);
+}
+.CustomBtn{
+    -fx-border-width: 1;
+    -fx-border-color:rgba(78, 160, 234, 0.35);
+    -fx-font-size: 14;
+    -fx-background-color: rgba(78, 160, 234, 0.76);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.17), 7, 0, 0, 0);
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+}
+.CustomBtn:hover{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);
+    -fx-border-color:rgba(78, 160, 234, 0.4);
+    -fx-cursor: hand;
+}
+.message_done{
+    -fx-text-fill: #4cde69;
+    -fx-font-size: 14;
+}
+.message_err{
+    -fx-text-fill: #f33838;
+    -fx-font-size: 14;
+
+}
+.CustomLable{
+    -fx-font-size:16 ;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(78, 160, 234, 0.91);
+
+
+}
+.CustomText{
+    -fx-font-size:16 ;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(0, 0, 0, 0.78);
+}
+.Tableheader{
+
+
+    -fx-border-width: 0  1px 0 0;
+    -fx-border-color: rgba(0, 0, 0, 0.43);
+    -fx-padding: 0 2px 0 0;
+    /*-fx-background-color: red;*/
+}
+.TableheaderContainer{
+
+    -fx-pref-height: 30;
+    -fx-alignment: center-left;
+    -fx-background-color: white;
+    -fx-pref-width: 130;
+    -fx-border-width: 1px 0 1px 0 ;
+    -fx-border-color: rgba(0, 0, 0, 0.34);
+}
+.rowContainer{
+    -fx-pref-height: 30;
+
+}
+.row{
+    -fx-pref-height: 30;
+    -fx-pref-width: 130;
+}
+.rowContainer:hover{
+    -fx-background-color: rgba(78, 160, 234, 0.25);
+    -fx-cursor:hand;
+}
+.rowContainerSelected{
+    -fx-background-color: rgba(78, 160, 234, 0.25);
+
+}
+.OddRow{
+
+    -fx-background-color:#FFFFFFFF
+}
+.evenRow{
+
+    -fx-background-color:#A6A6A615
+}
+.checkBox{
+    -fx-border-color: rgba(78, 160, 234, 0.8);
+
+    -fx-border-width: 1px;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 2;
+
+}
+.checked{
+    -fx-border-color: rgba(78, 160, 234, 0.8);
+    -fx-background-color: rgba(78, 160, 234, 0.8);
+    -fx-border-width: 1px;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 2;
+
+}
+
+.item{
+    -fx-text-alignment: left;
+    -fx-background-color: white;
+    -fx-max-width: 100;
+    -fx-pref-width: 110;
+    -fx-max-height: 40;
+    -fx-pref-height: 30;
+    -fx-cursor: hand;
+}
+.item:hover{
+    -fx-background-color: rgba(78, 160, 234, 0.44);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);
+
+}
+.round:hover{
+    -fx-background-color: rgba(78, 160, 234, 0.47);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);
+    -fx-text-fill: white;
+
+}
+.roundB:hover{
+    -fx-background-color: rgba(78, 160, 234, 0.44);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);
+
+}
+.roundB{
+    -fx-text-alignment: left;
+    -fx-background-color: white;
+    -fx-background-radius: 5 5 0 0;
+    -fx-max-width: 100;
+    -fx-pref-width: 110;
+    -fx-max-height: 40;
+    -fx-pref-height: 30;
+    -fx-cursor: hand;
+}
+.round{
+    -fx-text-alignment: left;
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 5 5;
+    -fx-max-width: 100;
+    -fx-pref-width: 110;
+    -fx-max-height: 40;
+    -fx-pref-height: 30;
+    -fx-cursor: hand;
+}
+.DropMenu{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);
+    -fx-cursor: hand;
+}

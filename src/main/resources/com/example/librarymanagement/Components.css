@@ -1,0 +1,142 @@
+.header{
+    -fx-pref-height: 200;
+    -fx-background-color: #68adea;
+}
+.MenuContainer{
+    -fx-pref-width: 200;
+    -fx-pref-height: 650;
+    -fx-border-width:0 1px 0 0 ;
+    -fx-border-color: rgba(0, 0, 0, 0.35);
+    /*-fx-background-color: #68adea;*/
+}
+.MenuItem{
+    -fx-pref-width: 200;
+    -fx-pref-height: 40;
+}
+.MenuItem:hover{
+    -fx-background-color: rgba(78, 160, 234, 0.25);
+    -fx-cursor:pointer;
+}
+.selectedItem{
+    -fx-border-width:0 0 0 4px ;
+    -fx-border-color: rgba(78, 160, 234, 0.68);
+
+}
+.box{
+    -fx-background-color: rgba(166, 166, 166, 0.73);
+    -fx-background-radius: 75;
+    -fx-border-width: 5;
+    -fx-border-color: rgb(78, 160, 234);
+    -fx-border-radius: 75;
+    -fx-alignment: center;
+    /*-fx-alignment: center;*/
+}
+.resShow{
+    -fx-font-size: 40;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(93, 92, 92, 0.56);
+}
+.bar{
+    -fx-background-color: #fc3232;
+    -fx-pref-height: 20;
+    -fx-pref-width: 200;
+    -fx-background-radius: 10;
+    /*-fx-border-radius: 10;*/
+}
+.table{
+    /*-fx-pref-width: ;*/
+    -fx-border-width: 1px;
+}
+.rowSelected{
+    -fx-pref-height: 30;
+    -fx-background-color: rgba(93, 92, 92, 0.24);
+}
+.rowUnSelected{
+    -fx-pref-height: 30;
+}
+.rowOdd{
+    -fx-pref-height: 30;
+    -fx-background-color:#FFFFFFFF
+}
+.roweven{
+    -fx-pref-height: 30;
+    -fx-background-color:#A6A6A615
+}
+.row:hover{
+    -fx-background-color: rgba(128, 127, 127, 0.27);
+}
+.item{
+    -fx-pref-width: 100;
+    -fx-background-color: red;
+}
+.options{
+    -fx-pref-height: 60px;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: rgba(0, 0, 0, 0.08);
+    -fx-alignment: center-left;
+    -fx-padding:10px;
+    /*-fx-pref-width: 1000px;*/
+    /*-fx-background-color: red;*/
+}
+.Search{
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(0, 0, 0, 0.49);
+    -fx-padding: 3px;
+    -fx-pref-width: 200px;
+    /*-fx-translate-x: 300 ;*/
+}
+.Search:focused{
+    /*-fx-scale-x: 1.02;*/
+    /*-fx-scale-y: 1.02;*/
+
+}
+.AddBook{
+    -fx-cursor: hand;
+    -fx-font-size: 15px;
+
+}
+.AddBook:hover{
+    -fx-border-width: 1px;
+}
+._column {
+    -fx-border-width: 0 0 0 1px;
+    -fx-text-alignment: left;
+    -fx-border-color: rgba(0, 0, 0, 0.2);
+}
+.MainTitle{
+    -fx-font-size: 20;
+    -fx-max-width: 500;
+    -fx-pref-width: 500;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+.UserName{
+    -fx-font-size: 16;
+    -fx-max-width: 200;
+    -fx-pref-width: 200;
+    -fx-text-fill: white;
+}
+.UnselectedStyle{-fx-pref-width: 10;
+-fx-pref-height: 10;
+-fx-background-radius: 5;
+-fx-border-width: 1px;
+-fx-border-color: rgba(74,156,246,0.72);
+-fx-border-radius: 5px;
+-fx-background-color:rgba(74,156,246,0.72);
+}
+.DashboardLable{
+    -fx-font-size: 36;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3883f5;
+    -fx-text-alignment: center;
+
+}
+.PopupMessage{
+    -fx-pref-width: 200;
+    -fx-pref-height: 100;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+    -fx-border-color: rgba(56, 131, 245, 0.58);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 7, 0, 0, 0);
+
+}
