@@ -154,8 +154,8 @@ public class Controller {
                 if(!issueBook.isNotify()){
                     Member member=MemberSearch(issueBook.getMember_id());
                     try {
-                        if(getLanguage().equals("English"))
-                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"deadline exceeded","Dear"+member.getMember_Firstname()+"You have exceeded the deadline for returning the book. You must return it as soon as possible");
+                        if(language.equals("English"))
+                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"deadline exceeded","Dear "+member.getMember_Firstname()+"You have exceeded the deadline for returning the book. You must return it as soon as possible");
                         else
                             emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"dépassé le délai",member.getMember_Firstname()+"Vous avez dépassé le délai de retour du livre, vous devez le retourner au plus vite");
                         issueBook.setNotify(true);

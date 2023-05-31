@@ -40,7 +40,7 @@ import javax.mail.Session;
 import com.google.api.services.gmail.model.Message;
 import org.apache.commons.codec.binary.Base64;
 public class EmailController {
-    private  final  String EMAIL_SENDER = "younesbenzaama011@gmail.com";
+    private  final  String EMAIL_SENDER = "gestbibio20@gmail.com";
     Gmail service;
     public  EmailController() throws Exception{
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -56,7 +56,7 @@ public class EmailController {
 private static Credential getCredentials(final NetHttpTransport httpTransport,GsonFactory jsonFacory)
         throws IOException {
     // Load client secrets.
-    InputStream in = EmailController.class.getResourceAsStream("client.json");
+    InputStream in = EmailController.class.getResourceAsStream("client_secret.json");
     if (in == null) {
         throw new FileNotFoundException("Resource not found: " + "");
     }

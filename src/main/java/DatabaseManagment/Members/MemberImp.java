@@ -126,14 +126,15 @@ public class MemberImp implements MemberDAO {
         String sql = "insert into abonne values (?,?,?,?,?,?,?)";
         PreparedStatement st = connection.prepareStatement(sql);
 
-        st.setInt(1,member.member_id);
+        st.setInt(1,member.getMember_id());
         st.setString(2,member.getMember_Firstname());
         st.setString(3,member.getMember_Lastname());
         st.setString(4,member.getAddress());
-        st.setInt(5,member.library_num);
+        st.setInt(5,member.getLibrary_num());
         st.setString(6,member.getEmail());
         st.setInt(7,member.getType());
-//        System.out.println();
+
+        System.out.println(member.getType());
         int res = st.executeUpdate();
         DatabaseConnection.close(connection,st);
 

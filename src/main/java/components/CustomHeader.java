@@ -45,7 +45,7 @@ public class CustomHeader extends HBox {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        Image userImage = new Image("G:\\coding\\library-management-appliction-master\\src\\main\\resources\\pics\\user.png");
+        Image userImage = new Image("G:\\coding\\library-management-appliction-master\\src\\main\\resources\\pics\\user.png" );
         ImageView imageView = new ImageView();
         imageView.setImage(userImage);
         imageView.setFitWidth(35);
