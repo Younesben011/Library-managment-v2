@@ -55,11 +55,11 @@
     -fx-background-radius: 10;
     -fx-text-fill: white;
 }
-.CustomBtn:hover{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);
-    -fx-border-color:rgba(78, 160, 234, 0.4);
-    -fx-cursor: hand;
-}
+/*.CustomBtn:hover{*/
+/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 7, 0, 0, 0);*/
+/*    -fx-border-color:rgba(78, 160, 234, 0.4);*/
+/*    -fx-cursor: hand;*/
+/*}*/
 .message_done{
     -fx-text-fill: #4cde69;
     -fx-font-size: 14;

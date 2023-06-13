@@ -39,11 +39,12 @@ public class AcountImp implements AcountDAO{
     @Override
     public int addAcount(Acount acount) throws SQLException {
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "insert into compte values (?,?)";
+        String sql = "insert into compte values (?,?,?)";
         PreparedStatement st = connection.prepareStatement(sql);
 
         st.setString(1,acount.getLogin());
         st.setString(2,acount.getPassword());
+        st.setString(3,"bibiothécaire");
 
 
 //        System.out.println();

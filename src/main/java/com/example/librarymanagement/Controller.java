@@ -6,6 +6,9 @@ import DatabaseManagment.Acount.AcountImp;
 import DatabaseManagment.Author.Author;
 import DatabaseManagment.Author.AuthorDAO;
 import DatabaseManagment.Author.AuthorImp;
+import DatabaseManagment.BookOrder.BokkOrderImmp;
+import DatabaseManagment.BookOrder.BookOrder;
+import DatabaseManagment.BookOrder.BookOrderDAO;
 import DatabaseManagment.Books.Book;
 import DatabaseManagment.Books.BookDAO;
 import DatabaseManagment.Books.BookImp;
@@ -44,8 +47,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Controller {
+//    private  final  String MANAGER_EMAIL = "gestbibio20@gmail.com";
+    private  final  String MANAGER_EMAIL = "younesbenzaama011@gmail.com";
+    private  final  int MAX_ORDERS = 5;
+//    private  final  int MAX_Defaulter = 5;
     Routes routes;
-    Book deletedBook;
+    public Book deletedBook;
     Stage deaStage;
     HBox root;
     librarianDAO libDAO = new LibrarianImp();
@@ -153,11 +160,25 @@ public class Controller {
                 num++;
                 if(!issueBook.isNotify()){
                     Member member=MemberSearch(issueBook.getMember_id());
+                    member.setId_sn(1);
                     try {
+                        memberDAO.updateMember(member);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        Book bookInfo =bookDAO.getBook(copyDAO.getCopy(issueBook.getCopy_id()).getBook_id());
                         if(language.equals("English"))
-                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"deadline exceeded","Dear "+member.getMember_Firstname()+"You have exceeded the deadline for returning the book. You must return it as soon as possible");
+                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"Dear "+member.getMember_Firstname()+" You have exceeded the deadline for returning the book.\n"+
+                                    "book id :"+bookInfo.getBookId()+"\n"+
+                                    "book title :"+bookInfo.getBookName()+"\n"+
+                                    " You must return it as soon as possible","deadline exceeded");
                         else
-                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"dépassé le délai",member.getMember_Firstname()+"Vous avez dépassé le délai de retour du livre, vous devez le retourner au plus vite");
+                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),member.getMember_Firstname()+
+                                    " Vous avez dépassé le délai de retour d'ouvrage," +
+                                    "ouvrage id :"+bookInfo.getBookId()+"\n"+
+                                    "ouvrage titre :"+bookInfo.getBookName()+"\n"+
+                                    " vous devez le retourner au plus vite","dépassé le délai");
                         issueBook.setNotify(true);
                         issueBookDAO.updateIssueBook(issueBook);
                     } catch (GeneralSecurityException e) {
@@ -187,11 +208,27 @@ public class Controller {
             if(is_defaulter>=0&&issueBook.getReal_return_date()==null){
                 if(!issueBook.isNotify()){
                     Member member=MemberSearch(issueBook.getMember_id());
+                    member.setId_sn(1);
                     try {
+                        memberDAO.updateMember(member);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        Book bookInfo =bookDAO.getBook(copyDAO.getCopy(issueBook.getCopy_id()).getBook_id());
+
                         if(language.equals("English"))
-                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"deadline exceeded","Dear"+member.getMember_Firstname()+"You have exceeded the deadline for returning the book. You must return it as soon as possible");
+                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"Dear "+member.getMember_Firstname()+
+                                    " You have exceeded the deadline for returning the book.\n"+
+                                    "book id :"+bookInfo.getBookId()+"\n"+
+                                    "book title :"+bookInfo.getBookName()+"\n"+
+                                    " You must return it as soon as possible","deadline exceeded");
                         else
-                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),"dépassé le délai",member.getMember_Firstname()+"Vous avez dépassé le délai de retour du livre, vous devez le retourner au plus vite");
+                            emailController.sendEmail(MemberSearch(issueBook.getMember_id()).getEmail(),member.getMember_Firstname()+
+                                    " Vous avez dépassé le délai de retour d'ouvrage,\n" +
+                                    "ouvrage id :"+bookInfo.getBookId()+"\n"+
+                                    "ouvrage titre :"+bookInfo.getBookName()+"\n"+
+                                    " vous devez le retourner au plus vite","dépassé le délai");
                         issueBook.setNotify(true);
                         issueBookDAO.updateIssueBook(issueBook);
                     } catch (GeneralSecurityException e) {
@@ -425,6 +462,7 @@ public class Controller {
         deaStage.show();
     }
     public int getBooksNumber() throws SQLException {
+        palceOrder();
         List<Book> books=bookDAO.getAllBooks();
         for (Book book:
              books) {
@@ -666,7 +704,8 @@ public class Controller {
             throw new RuntimeException(e);
         }
         return true;
-    }    public boolean  updateBook(Book book,String prev_id){
+    }
+    public boolean  updateBook(Book book,String prev_id){
         try {
             Book prev_book = bookDAO.getBook(prev_id);
             System.out.println("q"+prev_book.getBookQuantity());
@@ -695,6 +734,7 @@ public class Controller {
 
             boolean update_state = bookDAO.updateBook(book,prev_id);
             if (update_state){
+                System.out.println("up done");
                 return true;
             }
 
@@ -804,6 +844,15 @@ public class Controller {
         }
         return issueBook;
     }
+    public List<IssueBook> getIssueBooksByMember(int member_id){
+        List<IssueBook> issueBooks=null;
+        try {
+            issueBooks=issueBookDAO.getIssueBooksByMemberID(member_id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return issueBooks;
+    }
 //    getLastIssueBook
 public  boolean ReIssueBook(IssueBook issueBook){
     IssueBook last_issueBook;
@@ -853,7 +902,6 @@ public  boolean ReIssueBook(IssueBook issueBook){
         }
         IssueBook issueBook = new IssueBook(new_id,getLibrarian_number(),member_id,copy_id,issue_date,return_date);
         try {
-            System.out.println(new_id+member_id+book_id);
             res= issueBookDAO.addIssueBook(issueBook);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -861,7 +909,6 @@ public  boolean ReIssueBook(IssueBook issueBook){
         if (res>0){
             int update_res =copyDAO.disableCopy(copy_id);
             if (update_res==1){
-                System.out.println("updated");
                 return true;
             }
         }
@@ -976,6 +1023,180 @@ public  boolean ReIssueBook(IssueBook issueBook){
             throw new RuntimeException(e);
         }
         return issueBook;
+    }
+
+    public int getNewOrderId(){
+        BookOrderDAO bookOrderDAO = new BokkOrderImmp();
+        List<BookOrder> orders1=new ArrayList<>();
+        try {
+            orders1=bookOrderDAO.getAllBookOrders();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if(orders1.size()==0)
+            return 1;
+        else {
+            int last_id=orders1.get(orders1.size()-1).getOrder_id();
+            return last_id+1;
+        }
+    }
+    public int order_num(String isbn){
+        BookOrderDAO bookOrderDAO = new BokkOrderImmp();
+        BookOrder order;
+        try {
+            order =bookOrderDAO.getBookOrderByBook(isbn);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if(order!=null)
+            return order.getOrder_num();
+        return 0;
+    }
+    public List<BookOrder> getPlacedOrders(){
+        BookOrderDAO bookOrderDAO = new BokkOrderImmp();
+        List<BookOrder> orders;
+        List<BookOrder> placed_orders = null;
+        try {
+            orders=bookOrderDAO.getAllBookOrders();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if(orders!=null){
+            placed_orders=new ArrayList<>();
+            for (BookOrder order:orders){
+                if(order.getOrder_num()==MAX_ORDERS)
+                    placed_orders.add(order);
+            }
+        }
+        return placed_orders;
+    }
+    public boolean palceOrder(){
+        String englishOrder ="[book inventory notice]\n" +
+                "refill your inventory with this missing books :\n" +
+                "";
+        String frenchOrder ="[book inventory notice]\n" +
+                "refill your inventory with this missing books :\n" +
+                "";
+        String englishSub="book inventory notice";
+        String frenchSub="book inventory notice";
+        String order ;
+        String subject ;
+       order= language.equals("English")?englishOrder:frenchOrder;
+        subject= language.equals("English")?englishSub:frenchSub;
+        List<BookOrder> placed_orders = getPlacedOrders();
+        if (placed_orders.size()>0){
+            order+=getOrderList(placed_orders);
+            try {
+                EmailController emailController= new EmailController();
+                emailController.sendEmail(MANAGER_EMAIL,order,subject);
+                for(BookOrder order1: placed_orders){
+                    ResetOrder(order1.getIsbn());
+                }
+            } catch (GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+        return false;
+    }
+    public String getOrderList(List<BookOrder> placed_orders){
+        String orders_list="";
+        int i=0;
+        for (BookOrder bookOrder:placed_orders){
+            i++;
+            orders_list+=i+"-"+bookOrder.getIsbn()+"\n";
+        }
+        return orders_list;
+    }
+    public void ResetOrder(String isbn){
+        BookOrderDAO bookOrderDAO = new BokkOrderImmp();
+        try {
+            bookOrderDAO.ResetOrder(isbn);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
+
+    public void orderHandlle(String isbn){
+        if(isbn==null)
+            isbn=deletedBook.getBookId();
+        BookOrderDAO bookOrderDAO = new BokkOrderImmp();
+        BookOrder order = null;
+        try {
+            order =bookOrderDAO.getBookOrderByBook(isbn);
+        if(order==null){
+            order= new BookOrder(getNewOrderId(),isbn,1);
+            bookOrderDAO.addBook(order);
+            System.out.println("we got a new order == new order num "+order.getOrder_num());
+
+        }else{
+            System.out.println("we got an old order == prev order num "+order.getOrder_num());
+            order.setOrder_num(order.getOrder_num()+1);
+            System.out.println("we got a new order == current order num "+order.getOrder_num());
+            bookOrderDAO.updateBook(order);
+        }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void blockMember(Member member){
+        try {
+            memberDAO.updateMember(member);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendUnblockMsg(Member member){
+        String message;
+        String subject="["+member.getMember_Firstname()+"]";
+        if(language.equals("English")){
+            message="Your account has been unblocked, you can now resume borrowing books";
+
+        }else{
+            message="Votre compte a été Débloquer, vous pouvez maintenant reprendre l'emprunt de livres";
+        }
+        try {
+            emailController.sendEmail(member.getEmail(),message,subject);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void sendblockMsg(Member member){
+        String message;
+        String subject="["+member.getMember_Firstname()+"]";
+        if(language.equals("English")){
+            message="You have been banned for damaging library property." +
+                    " To lift the ban, please contact the administration to take the necessary action";
+
+        }else{
+            message="Vous avez été banni pour avoir endommagé la propriété de la bibliothèque. Pour lever l'interdiction, veuillez contacter l'administration pour prendre les mesures nécessaires";
+        }
+        try {
+            emailController.sendEmail(member.getEmail(),message,subject);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

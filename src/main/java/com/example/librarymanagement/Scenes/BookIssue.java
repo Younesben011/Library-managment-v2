@@ -7,6 +7,7 @@ import DatabaseManagment.Members.Member;
 import com.example.librarymanagement.Controller;
 import com.example.librarymanagement.LoginPage;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -19,19 +20,28 @@ import javafx.scene.paint.Color;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.function.LongUnaryOperator;
 
 public class BookIssue extends VBox {
     static Label NOBook;
     static Label NoMem;
-     TextField BookId;
+    static HBox btnContainer;
+    static  Label BookCat;
+    private static Label Type;
+    TextField BookId;
      TextField MemberId;
     static String[] infoList;
+    String[] en_types={"dissertation","book","review"};
+    String[] fr_types={"mémoire","livre","revue"};
+    static String[] fr_categ={"master","lisence"};
+    static String[] types;
 
     static Label pinedBookLable;
     static Label pinedMemLable;
     boolean first_time;
-    DatePicker Dateissue;
-    DatePicker Returnissue;
+    static DatePicker Dateissue;
+    static DatePicker Returnissue;
     static int member_id;
     static String book_id="";
     static Member member=null;
@@ -65,7 +75,7 @@ public class BookIssue extends VBox {
 
     String Css= LoginPage.class.getResource("style.css").toExternalForm();
 
-
+    static Button Order ;
     public static  boolean bookController(Controller controller,TextField BookId){
 
         book_id=BookId.getText();
@@ -73,6 +83,7 @@ public class BookIssue extends VBox {
         if (book!=null){
             copy_id= controller.bookAvailableCheck(book_id);
             if (copy_id==-1){
+                btnContainer.getChildren().add(Order);
                 message.setText(messageList[0]);
                 if(message.getStyleClass().get(1).equals("message_done")){
                     message.getStyleClass().remove(0);
@@ -103,8 +114,9 @@ public class BookIssue extends VBox {
                 BookCopies.getStyleClass().add("CustomText");
                 AviliableBooks.setText(String.valueOf(aviliable_books));
                 AviliableBooks.getStyleClass().add("CustomText");
-                BookEditor.setText(book.getBookEditor());
-                BookEditor.getStyleClass().add("CustomText");
+                ///////////////////////////// edit ////////////////////////////////////////////////////////
+
+
                 BookAuthor.setText(controller.getAuthorById(Author_id).getAuthor_name());
                 BookAuthor.getStyleClass().add("CustomText");
 
@@ -118,8 +130,12 @@ public class BookIssue extends VBox {
                 bookAvCopies.getStyleClass().add("CustomLable");
                 Label  bookAuthorLable= new Label(infoList[4]);
                 bookAuthorLable.getStyleClass().add("CustomLable");
-                Label bookEditorLable  = new Label(infoList[5]);
-                bookEditorLable.getStyleClass().add("CustomLable");
+                Label typeLable = new Label("Type:");
+                typeLable.getStyleClass().add("CustomLable");
+                Type = new Label(types[book.getType_int()-1]);
+                Type.getStyleClass().add("CustomText");
+                HBox bookTypeBox= new HBox(typeLable,Type);
+                bookTypeBox.setSpacing(10);
 
                 HBox bookIdBox= new HBox(bookIdLabel,_BookID);
                 bookIdBox.setSpacing(10);
@@ -131,8 +147,7 @@ public class BookIssue extends VBox {
                 bookAvCopiesBox.setSpacing(10);
                 HBox  bookAuthorBox= new HBox(bookAuthorLable,BookAuthor);
                 bookAuthorBox.setSpacing(10);
-                HBox bookEditorBox= new HBox(bookEditorLable,BookEditor);
-                bookEditorBox.setSpacing(10);
+
 
 
 
@@ -140,8 +155,29 @@ public class BookIssue extends VBox {
                 BookInfocontainer.getChildren().add(bookNameBox);
                 BookInfocontainer.getChildren().add(bookCopiesBox);
                 BookInfocontainer.getChildren().add(bookAvCopiesBox);
+                BookInfocontainer.getChildren().add(bookTypeBox);
                 BookInfocontainer.getChildren().add(bookAuthorBox);
-                BookInfocontainer.getChildren().add(bookEditorBox);
+                if(book.getType_int()==2){
+                    Label bookEditorLable  = new Label(infoList[5]);
+                    bookEditorLable.getStyleClass().add("CustomLable");
+                    BookEditor.setText(book.getBookEditor());
+                    BookEditor.getStyleClass().add("CustomText");
+                    HBox bookEditorBox= new HBox(bookEditorLable,BookEditor);
+                    bookEditorBox.setSpacing(10);
+                    BookInfocontainer.getChildren().add(bookEditorBox);
+                }else if(book.getType_int()==1){
+                    BookCat=new Label();
+                    Label bookCatLable = new Label(infoList[10]);
+                    bookCatLable.getStyleClass().add("CustomLable");
+                    BookCat.setText(fr_categ[book.getCat()-1]);
+                    BookCat.getStyleClass().add("CustomText");
+                    HBox bookCatBox= new HBox(bookCatLable,BookCat);
+                    bookCatBox.setSpacing(10);
+                    BookInfocontainer.getChildren().add(bookCatBox);
+                }
+
+
+
                 return true;
 
             }
@@ -155,6 +191,17 @@ public class BookIssue extends VBox {
         return false;
     }
     public static  boolean memberController(Controller controller,TextField MemberId){
+        Member member1=null;
+        if (!MemberId.getText().equals(""))
+            member1=controller.MemberSearch(Integer.parseInt(MemberId.getText()));
+        if(member1!=null&&member1.getId_sn()==2){
+            message.setText(messageList[8]);
+            if(message.getStyleClass().get(1).equals("message_done")){
+                message.getStyleClass().remove(0);
+                message.getStyleClass().add("message_err");
+            }
+            return false;
+        }
         if(MemberId.getText().equals("")){
             message.setText("");
             if(MemInfocontainer.getChildren().size()>1){
@@ -179,10 +226,39 @@ public class BookIssue extends VBox {
             }
         }
         if (typeCheck){
+            boolean issue_check = false;
             member=controller.MemberSearch(member_id);
             if (member!=null){
                 IssueBook issueBook=controller.getIssueBookByMember(member_id);
-                if (issueBook==null||issueBook.getReal_return_date()!=null){
+                System.out.println("type"+member.getType());
+                if(member.getType()==1){
+                    Dateissue.setValue(LocalDate.now());
+                    Returnissue.setValue(LocalDate.now().plusDays(7));
+//                    ====================================================
+                    System.out.println("student -----");
+                    if (issueBook==null||issueBook.getReal_return_date()!=null)
+                        issue_check=true;
+                }
+                else{
+                    System.out.println("teacher -----");
+                    Dateissue.setValue(LocalDate.now());
+                    Returnissue.setValue(LocalDate.now().plusDays(14));
+
+                    List<IssueBook> issueBooks =controller.getIssueBooksByMember(member_id);
+                    System.out.println("size === "+issueBooks.size());
+                    int issue_number = issueBooks.size();
+                    if(issue_number<3)
+                        issue_check=true;
+                    else {
+                        message.setText(messageList[4]);
+                        if(message.getStyleClass().get(1).equals("message_done")){
+                            message.getStyleClass().remove(0);
+                            message.getStyleClass().add("message_err");
+                        }
+                        return false ;
+                    }
+                }
+                if (issue_check){
                     System.out.println("user clear");
                     pinedMemLable.setDisable(true);
 
@@ -253,23 +329,25 @@ public class BookIssue extends VBox {
         language = controller.getLanguage();
 
         if (language.equals("English")) {
-            infoList = new String[]{"Book ID:","Book Name:","Copie's Count:","Aviliables Copies:","Book Author:","Book Editor:",
-                    "Member ID:","First Name:","Last Name:", "Address:"};
+            types=en_types;
+            infoList = new String[]{"Book ID:","Book title:","Copie's Count:","Aviliables Copies:","Book Author:","Book Editor:",
+                    "Member ID:","First Name:","Last Name:", "Address:","category:"};
         } else {
-            infoList = new String[]{"ID du livre:","Nom du livre:","Nombre de copies:","Copies disponibles:","Auteur du livre:","Éditeur du livre:",
-                    "ID du membre:","Prénom:","Nom de famille:", "Adresse:"};
+            types=fr_types;
+            infoList = new String[]{"ID du livre:","titre d'ouvrage:","Nombre de copies:","Copies disponibles:","Auteur du livre:","Éditeur du livre:",
+                    "ID du membre:","Prénom:","Nom de famille:", "Adresse:","catégorie:"};
         }
         if (language.equals("English")) {
             detailList = new String[]{"Member Details","Book Details","No Book Selected","get pined Book","No member Selected","get pined Member",
-                    "Member Id ","Enter member id ","Book Id ","Enter Book id ","Enter Issue date","Enter Return Date","submit"};
+                    "Member Id ","Enter member id ","Book Id ","Enter Book id ","Enter Issue date","Enter Return Date","submit","Order"};
         } else {
             detailList = new String[]{"Détails du Membre","Détails du Livre","Aucun livre sélectionné","obtenir le livre sélectionné","Aucun membre sélectionné","obtenir le membre sélectionné",
-                    "Id du Membre ","Entrer l'ID du membre ","Id du Livre ","Entrer l'ID du livre ","Entrez la date d'émission","Entrez la date de retour","soumettre"};
+                    "Id du Membre ","Entrer l'ID du membre ","Id du Livre ","Entrer l'ID du livre ","Entrez la date d'émission","Entrez la date de retour","soumettre","échec"};
         }
-        String[] messageEnglish = {"the book's copies\n are already issued","this book has  no copies","Book Not found","member_id must\n be a number "
-                ,"must return the prev book to get a new one","Member Not found","Err: complete the form ","issue book secc"};
-        String[] messageFrench = {"les exemplaires du livre\n sont déjà empruntés","ce livre n'a pas de copies","Livre non trouvé","identifiant de membre \ndoit être un nombre"
-                ,"doit retourner le livre précédent\n pour en obtenir un nouveau","Membre non trouvé","Erreur: complétez le formulaire ","livre émis avec succès"};
+        String[] messageEnglish = {"all the book's copies\n are already issued","this book has no copies","Book Not found","member_id must\n be a number "
+                ,"must return the prev book to get a new one","Member Not found","Err: complete the form ","issue book secc","this member is blocked"};
+        String[] messageFrench = {"tout les exemplaires du livre\n sont déjà empruntés","ce livre n'a pas de copies","Livre non trouvé","identifiant de membre \ndoit être un nombre"
+                ,"doit retourner le livre précédent\n pour en obtenir un nouveau","Membre non trouvé","Erreur: complétez le formulaire ","livre émis avec succès","ce membre est bloqué"};
 
 // assuming the language variable holds the selected language ("English" or "French")
         messageList = (controller.getLanguage().equals("English")) ? messageEnglish : messageFrench;
@@ -363,7 +441,8 @@ public class BookIssue extends VBox {
         Label MemberIdLabel = new Label(detailList[6]);
         MemberId = new TextField();
         MemberId.setPromptText(detailList[7]);
-        MemberId.setOnAction(e->{
+        MemberId.setOnMouseClicked(e->{
+//            btnContainer.getChildren().remove(Order);
             if(MemberId.getText().equals("")){
                 message.setText("");
             }
@@ -372,6 +451,10 @@ public class BookIssue extends VBox {
         MemberId.setOnKeyReleased(e->{
             memberController(controller,MemberId);
             controller.setPinedMem(false);
+            btnContainer.getChildren().remove(Order);
+            if(MemberId.getText().equals("")){
+                message.setText("");
+            }
         });
 
         
@@ -394,6 +477,8 @@ public class BookIssue extends VBox {
             }
         });
         BookId.setOnKeyReleased(e->{
+            btnContainer.getChildren().remove(Order);
+
             if (message.getText().equals("")){
                 message.setText("");
                 controller.setPinedBook(false);
@@ -414,6 +499,7 @@ public class BookIssue extends VBox {
         Label DateIssueLable = new Label(detailList[10]);
         Dateissue = new DatePicker();
         Dateissue.setPrefSize(260,30);
+        Dateissue.setDisable(true);
 
         Dateissue.setOnAction(e->{
             if(BookId.getText().equals("")||MemberId.getText().equals("")){
@@ -426,7 +512,9 @@ public class BookIssue extends VBox {
         Label ReturnLable = new Label(detailList[11]);
         Returnissue = new DatePicker();
         Returnissue.setPrefSize(260,30);
-
+/////////////////////////////////////////////////////////////////////////
+        Returnissue.setDisable(false);
+////////////////////////////////////////////////////////////////////////////
         Returnissue.setOnAction(e->{
             if(BookId.getText().equals("")||MemberId.getText().equals("")){
                 message.setText("");
@@ -434,7 +522,18 @@ public class BookIssue extends VBox {
 //            System.out.println();
                     return_date=Returnissue.getValue();
         });
-        HBox btnContainer =new HBox();
+        Order =new Button(detailList[13]);
+        Order.setPrefSize(150,30);
+        Order.getStyleClass().add("CustomBtn");
+        Order.setAlignment(Pos.CENTER);
+
+        Order.setOnAction(e->{
+            if(book!=null){
+                controller.orderHandlle(book.getBookId());
+            }
+        });
+
+        btnContainer =new HBox(20);
         btnContainer.setAlignment(Pos.CENTER);
         Button submit =new Button(detailList[12]);
         submit.setPrefSize(150,30);

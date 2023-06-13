@@ -6,8 +6,8 @@ public class DatabaseConnection {
     public static Connection getConnection()throws SQLException {
         Connection connection=null;
         String url = "jdbc:mysql://localhost:3306/gestbibio";
-        String username="root";
-        String password="054090";
+        String username="  ";
+        String password="  ";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url,username,password);

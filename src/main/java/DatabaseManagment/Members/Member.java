@@ -7,9 +7,10 @@ public class Member {
         String address;
         int library_num;
         int type;
+        int id_sn;
         String email;
 
-    public Member(int member_id, String member_Firstname, String member_Lastname, String address, int library_num,int type,String email) {
+    public Member(int member_id, String member_Firstname, String member_Lastname, String address, int library_num,int type,String email,int id_sn) {
         this.member_id = member_id;
         this.member_Firstname = member_Firstname;
         this.member_Lastname = member_Lastname;
@@ -17,6 +18,15 @@ public class Member {
         this.library_num = library_num;
         this.type = type;
         this.email = email;
+        this.id_sn = id_sn;
+    }
+
+    public int getId_sn() {
+        return id_sn;
+    }
+
+    public void setId_sn(int id_sn) {
+        this.id_sn = id_sn;
     }
 
     public String getEmail() {

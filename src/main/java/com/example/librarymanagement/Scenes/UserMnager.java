@@ -60,9 +60,10 @@ public class UserMnager extends VBox {
         is_admin=user.isIs_admin();
         setSpacing(10);
         setPrefWidth(1000);
-
+        String dir=System.getProperty("user.dir")+"\\src\\main\\resources\\pics\\user.png";
+//        System.out.println("from dir"+ System.getProperty("user.dir")+"src\\main\\resources\\pics\\user.png");
         String Css= LoginPage.class.getResource("style.css").toExternalForm();
-        Image userImage = new Image("G:\\coding\\java\\LibraryManagement\\src\\main\\resources\\pics\\user.png");
+        Image userImage = new Image(dir);
         ImageView imageView = new ImageView();
         imageView.setImage(userImage);
         imageView.setFitWidth(148);

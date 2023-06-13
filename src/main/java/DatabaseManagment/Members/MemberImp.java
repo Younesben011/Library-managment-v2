@@ -20,7 +20,7 @@ public class MemberImp implements MemberDAO {
     public Member getMember(int member_id) throws SQLException {
         Member member =null;
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "SELECT * FROM abonne where No_Ab =?";
+        String sql = "SELECT * FROM membre where No_Ab =?";
         PreparedStatement st = connection.prepareStatement(sql);
         st.setInt(1,member_id);
         for (Member member1:
@@ -37,8 +37,9 @@ public class MemberImp implements MemberDAO {
             String adress = res.getString("Adress");
             int library_num= res.getInt("no_bib") ;
             int type= res.getInt("type") ;
+            int id_sn= res.getInt("id_sn") ;
             String email= res.getString("email") ;
-            member = new Member(idM,first_name,last_name,adress,library_num,type,email);
+            member = new Member(idM,first_name,last_name,adress,library_num,type,email,id_sn);
             members_list.add(member);
         }
         DatabaseConnection.closeConnection(connection);
@@ -49,7 +50,7 @@ public class MemberImp implements MemberDAO {
     public Member getMember(String member_name) throws SQLException {
         Member member =null;
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "SELECT * FROM abonne where No_Ab =?";
+        String sql = "SELECT * FROM membre where No_Ab =?";
         PreparedStatement st = connection.prepareStatement(sql);
         st.setString(1,member_name);
         for (Member member1:
@@ -59,15 +60,15 @@ public class MemberImp implements MemberDAO {
         }
         ResultSet res =st.executeQuery();
         while (res.next()){
-
             int idM =res.getInt("No_Ab") ;
             String first_name = res.getString("nom");
             String last_name = res.getString("prenom");
             String adress = res.getString("Adress");
             int library_num= res.getInt("no_bib") ;
             int type= res.getInt("type") ;
+            int id_sn= res.getInt("id_sn") ;
             String email= res.getString("email") ;
-            member = new Member(idM,first_name,last_name,adress,library_num,type,email);
+            member = new Member(idM,first_name,last_name,adress,library_num,type,email,id_sn);
             members_list.add(member);
         }
         DatabaseConnection.closeConnection(connection);
@@ -80,7 +81,7 @@ public class MemberImp implements MemberDAO {
         List<Member> members_list2 =new ArrayList<>();
 
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "SELECT * FROM abonne ";
+        String sql = "SELECT * FROM membre ";
         PreparedStatement st = connection.prepareStatement(sql);
         ResultSet res =st.executeQuery();
         while (res.next()){
@@ -90,8 +91,10 @@ public class MemberImp implements MemberDAO {
             String adress = res.getString("Adress");
             int library_num= res.getInt("no_bib") ;
             int type= res.getInt("type") ;
+            int id_sn= res.getInt("id_sn") ;
+
             String email= res.getString("email") ;
-            member = new Member(idM,first_name,last_name,adress,library_num,type,email);
+            member = new Member(idM,first_name,last_name,adress,library_num,type,email,id_sn);
             members_list.add(member);
             members_list2.add(member);
         }
@@ -102,7 +105,7 @@ public class MemberImp implements MemberDAO {
     @Override
     public void updateMember(Member member) throws SQLException {
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "UPDATE abonne SET No_Ab = ?,nom = ?,prenom = ?,Adress = ?,no_bib =?,email=?,type=? WHERE No_Ab = ?";
+        String sql = "UPDATE membre SET No_Ab = ?,nom = ?,prenom = ?,Adress = ?,no_bib =?,email=?,type=?,id_sn=? WHERE No_Ab = ?";
         PreparedStatement st = connection.prepareStatement(sql);
         st.setInt(1,member.getMember_id());
         st.setString(2,member.getMember_Firstname());
@@ -111,7 +114,8 @@ public class MemberImp implements MemberDAO {
         st.setInt(5,member.getLibrary_num());
         st.setString(6,member.getEmail());
         st.setInt(7,member.getType());
-        st.setInt(8,member.getMember_id());
+        st.setInt(8,member.getId_sn());
+        st.setInt(9,member.getMember_id());
         st.executeUpdate();
 
         DatabaseConnection.close(connection,st);
@@ -123,7 +127,7 @@ public class MemberImp implements MemberDAO {
     @Override
     public void addMember(Member member) throws SQLException {
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "insert into abonne values (?,?,?,?,?,?,?)";
+        String sql = "insert into membre values (?,?,?,?,?,?,?,?)";
         PreparedStatement st = connection.prepareStatement(sql);
 
         st.setInt(1,member.getMember_id());
@@ -133,6 +137,7 @@ public class MemberImp implements MemberDAO {
         st.setInt(5,member.getLibrary_num());
         st.setString(6,member.getEmail());
         st.setInt(7,member.getType());
+        st.setInt(8,member.getId_sn());
 
         System.out.println(member.getType());
         int res = st.executeUpdate();
@@ -143,7 +148,7 @@ public class MemberImp implements MemberDAO {
     @Override
     public int deletMember(int member_id) throws SQLException {
         Connection connection = DatabaseConnection.getConnection();
-        String sql = "delete from abonne where No_Ab =?";
+        String sql = "delete from membre where No_Ab =?";
 
         PreparedStatement st = connection.prepareStatement(sql);
         st.setInt(1,member_id);

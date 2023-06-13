@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MembersManagmer extends VBox {
+    Label BlockMem;
+    String lockUnlock_path;
+    HBox  blockContainer;
     String[] emailLang;
     Button submit;
     Label messageOp;
@@ -109,12 +112,20 @@ public class MembersManagmer extends VBox {
                     "Member Id","Enter member Id",
                     "First Name","Enter member first name","Last Name",
                     "Enter member last name","Address","Enter member address",
-                    "Library Number","Submit","Reset","Member type"};
+                    "Library Number","Submit","Reset","Member type",
+                    "Block","Unblock"
+            };
             emailLang= new String[]{"wellcom","wellcom to library managment"};
         } else {
-            memberManagerList = new String[]{"AJOUTER MEMBRE","Rechercher","Ajouter un membre","Supprimer","Épingle","Modifier","MODIFIER MEMBRE","Identifiant du membre","Entrez l'identifiant du membre",
-                    "Prénom","Entrez le prénom du membre","Nom de famille","Entrez le nom de famille du membre","Adresse","Entrez l'adresse du membre",
-                    "Numéro de bibliothèque","Soumettre","Réinitialiser","type de membre"};
+            memberManagerList = new String[]{"AJOUTER MEMBRE","Rechercher",
+                    "Ajouter un membre","Supprimer","Épingle","Modifier","MODIFIER MEMBRE","Identifiant du membre","Entrez l'identifiant du membre",
+                    "Prénom","Entrez le prénom du membre","Nom de famille",
+                    "Entrez le nom de famille du membre","Adresse","Entrez l'adresse du membre",
+                    "Numéro de bibliothèque","Soumettre",
+                    "Réinitialiser","type de membre",
+                    "Bloqué","Débloqué"
+            };
+
             emailLang= new String[]{"bienvenue","bienvenue à la gestion de la bibliothèque"};
 
         }
@@ -195,7 +206,7 @@ public class MembersManagmer extends VBox {
         if(controller.getLanguage().equals("English"))
             search.setTranslateX(150);
         else
-            search.setTranslateX(20);
+            search.setTranslateX(-10);
         HBox addContainer =new HBox(2);
         addContainer.setAlignment(Pos.CENTER);
         AddMem = new Label(memberManagerList[2]);
@@ -203,7 +214,7 @@ public class MembersManagmer extends VBox {
         AddMem.setAlignment(Pos.CENTER);
         Plus.setAlignment(Pos.CENTER);
         Plus.setStyle("-fx-text-fill: #07c907;" +
-                "-fx-font-size: 25px;" +
+                "-fx-font-size: 20px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-translate-y: -2");
         addContainer.getChildren().add(Plus);
@@ -259,7 +270,7 @@ public class MembersManagmer extends VBox {
         Label del = new Label("_");
         del.setAlignment(Pos.CENTER);
         del.setStyle("-fx-text-fill: #e01f1f;" +
-                "-fx-font-size: 30px;" +
+                "-fx-font-size: 20px;" +
                 "-fx-font-weight: bold");
         deleteContainer.getChildren().add(delimageView);
         deleteContainer.getChildren().add(DeleteBook);
@@ -287,12 +298,18 @@ public class MembersManagmer extends VBox {
 
         PinContainer.setDisable(true);
         PinMember.setOnMouseClicked(e->{
+            if(controller.deletedMember.getId_sn()==2){
+                messageOp.setText("this member is blocked");
+                messageOp.setTextFill(Paint.valueOf("#fc3232"));
+            }else{
+
             if(!PinToggel){
                 controller.setPinedMem(true);
                 PinContainer.setDisable(true);}
             else
                 controller.setPinedMem(false);
             PinToggel=!PinToggel;
+            }
 
         });
 
@@ -338,9 +355,7 @@ public class MembersManagmer extends VBox {
         imageView.setFitWidth(14);
 
         EditBook = new Label(memberManagerList[5]);
-
         editContainer.getChildren().add(imageView);
-
         editContainer.getChildren().add(EditBook);
         editContainer.setDisable(true);
         EditBook.setOnMouseClicked(e->{
@@ -355,6 +370,66 @@ public class MembersManagmer extends VBox {
         });
         EditBook.getStyleClass().add("AddBook");
 
+
+        BlockMem = new Label(memberManagerList[19]);
+        blockContainer = new HBox(2);
+        blockContainer.setAlignment(Pos.CENTER);
+
+        FileInputStream blockfileInputStream;
+        lockUnlock_path ="/pics/padlock.png";
+        try {
+            URL delsUrl= new URL(LoginPage.class.getResource(lockUnlock_path).toExternalForm());
+            blockfileInputStream = new FileInputStream(delsUrl.getPath());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        Image blockimage =new Image(blockfileInputStream);
+        ImageView blockimageV =new ImageView(blockimage);
+        blockimageV.setFitHeight(14);
+        blockimageV.setFitWidth(14);
+
+
+
+        blockContainer.getChildren().add(blockimageV);
+        blockContainer.getChildren().add(BlockMem);
+        blockContainer.setDisable(true);
+        BlockMem.setOnMouseClicked(e->{
+            editContainer.setDisable(true);
+            deleteContainer.setDisable(true);
+            PinContainer.setDisable(true);
+            blockContainer.setDisable(true);
+            System.out.println("blockkkkk");
+            Member member = controller.deletedMember;
+            if(member!=null){
+                if(BlockMem.getText().equals(memberManagerList[19])){
+                    member.setId_sn(2);
+                    controller.updateMember(member);
+                    controller.sendblockMsg(member);
+                    try {
+                        table.UpdateTable(controller,null,controller.getAllMembers(),member_form);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }else if(BlockMem.getText().equals(memberManagerList[20])){
+                    member.setId_sn(0);
+                    controller.updateMember(member);
+                    controller.sendUnblockMsg(member);
+
+                    try {
+                        table.UpdateTable(controller,null,controller.getAllMembers(),member_form);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
+        BlockMem.getStyleClass().add("AddBook");
+
+
+
+
         messageOp = new Label();
         messageOp.setMaxWidth(300);
         messageOp.setPrefWidth(300);
@@ -363,6 +438,7 @@ public class MembersManagmer extends VBox {
         options.getChildren().add(editContainer);
         options.getChildren().add(deleteContainer);
         options.getChildren().add(PinContainer);
+        options.getChildren().add(blockContainer);
         options.getChildren().add(messageOp);
         options.getChildren().add(search);
         table = new CustomTable(controller,width,options,null,members_lsit,member_form);
@@ -470,11 +546,6 @@ public class MembersManagmer extends VBox {
                reset.setVisible(false);
         });
         submit.setOnAction(e->{
-            submit.setDisable(true);
-            if (language.equals("English"))
-                message.setText("wait....");
-            else
-                message.setText("attendez....");
             List<Member> members_lsit = null;
             try {
                 members_lsit = controller.getAllMembers();
@@ -515,7 +586,7 @@ public class MembersManagmer extends VBox {
                     }
                 }
                     member_firstname=MemberFirstName.getText();
-                    Member  member =new Member(member_id,member_firstname,member_lastname,member_address,member_librarynum,type,email);
+                    Member  member =new Member(member_id,member_firstname,member_lastname,member_address,member_librarynum,type,email,0);
                     boolean state= controller.AddMember(member);
                     if (state){
                         message.setText( messageList[4]);
@@ -559,16 +630,21 @@ public class MembersManagmer extends VBox {
                 member_address= MemberAddress.getText();
                 email=Email.getText();
                 member_librarynum= controller.getLibrary_number();
+                int id_sn= controller.deletedMember.getId_sn();
+                type=-1;
                 for(int i =0; i<types.length;i++){
                     if(Type.getValue().equals(types[i]))
-                        type=i;
-                    else
-                        type=-1;
+                        type=i+1;
+
                 }
-                Member  member =new Member(member_id,member_firstname,member_lastname,member_address,member_librarynum,type,email);
+                System.out.println("type"+type);
+                System.out.println("typess"+Type.getValue());
+                Member  member =new Member(member_id,member_firstname,member_lastname,member_address,member_librarynum,type,email,id_sn);
                 controller.updateMember(member);
                 try {
                     table.UpdateTable(controller,null,controller.getAllMembers(),member_form);
+                    container.getChildren().remove(form_container);
+                    table.setEffect(null);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

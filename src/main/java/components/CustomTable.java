@@ -10,6 +10,8 @@ import com.example.librarymanagement.Scenes.BookManager;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -17,12 +19,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomTable extends VBox {
     String[] memberList;
+    String lockUnlock_path;
 
     Double width;
     VBox table  ;
@@ -119,12 +126,16 @@ public class CustomTable extends VBox {
 
 
     }
+    String[] bookType;
     public void  UpdateTable(Controller controller,List<Book> books_list,VBox book_form){
 
         if (language.equals("English")) {
-            bookList = new String[]{"Book Id","Book Name","Book Editor","Book Quantity","Rest"};
+            bookList = new String[]{"ISBN","title","Author","Quantity","type","Rest","order"};
+            bookType= new String[]{"dissertation","book","review"};
         } else {
-            bookList = new String[]{"Identifiant", "Nom du livre", "Éditeur du livre", "Quantité de livres", "Reste"};
+            bookList = new String[]{"ISBN", "titre d'ouvrage", "Auteur", "Quantité","type", "Reste","échec"};
+            bookType= new String[]{"mémoire","livre","revue"};
+
         }
         if (table.getChildren().size()>0)
             table.getChildren().clear();
@@ -135,25 +146,34 @@ public class CustomTable extends VBox {
         space.setPrefWidth(30);
         Label BookID=new Label(bookList[0]);
         BookID.getStyleClass().add("_column");
-        BookID.setPrefWidth(200);
+        BookID.setPrefWidth(150);
         Label Bookname=new Label(bookList[1]);
         Bookname.getStyleClass().add("_column");
-        Bookname.setPrefWidth(200);
+        Bookname.setPrefWidth(150);
         Label BookEditor=new Label(bookList[2]);
         BookEditor.getStyleClass().add("_column");
-        BookEditor.setPrefWidth(200);
+        BookEditor.setPrefWidth(150);
+        Label BookType=new Label(bookList[4]);
+        BookType.getStyleClass().add("_column");
+        BookType.setPrefWidth(150);
         Label Quantity=new Label(bookList[3]);
         Quantity.getStyleClass().add("_column");
-        Quantity.setPrefWidth(200);
-        Label rest=new Label(bookList[4]);
+        Quantity.setPrefWidth(150);
+        Label rest=new Label(bookList[5]);
         rest.getStyleClass().add("_column");
-        rest.setPrefWidth(200);
-        header.getChildren().add(space);
+        rest.setPrefWidth(150);
+        Label orderNum=new Label(bookList[6]);
+        orderNum.getStyleClass().add("_column");
+        orderNum.setPrefWidth(150);
+//        header.getChildren().add(space);
         header.getChildren().add(BookID);
         header.getChildren().add(Bookname);
         header.getChildren().add(BookEditor);
+        header.getChildren().add(BookType);
         header.getChildren().add(Quantity);
         header.getChildren().add(rest);
+        header.getChildren().add(orderNum);
+
         header.prefWidth(width);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setStyle("-fx-pref-height: 25px;" +
@@ -186,12 +206,14 @@ public class CustomTable extends VBox {
             row.getStyleClass().remove("rowUnSelected");
 
             row.setOnMouseClicked(e->{
+//                System.out.println("from deleted book"+book.toString());
                 controller.setDeletedBook(book);
                 HBox editContainer = (HBox) options.getChildren().get(1);
                 Label editbtn = (Label) editContainer.getChildren().get(1);
                 HBox delContainer = (HBox) options.getChildren().get(2);
                 HBox pinContainer = (HBox) options.getChildren().get(3);
-                Label messageOp = (Label) options.getChildren().get(4);
+                HBox OrderContainer = (HBox) options.getChildren().get(4);
+                Label messageOp = (Label) options.getChildren().get(5);
                 messageOp.setText("");
                 Label del = (Label) delContainer.getChildren().get(1);
                 if(PrevRow==null){
@@ -202,7 +224,7 @@ public class CustomTable extends VBox {
                     editContainer.setDisable(true);
                     delContainer.setDisable(true);
                     pinContainer.setDisable(true);
-
+                    OrderContainer.setDisable(true);
                     PrevRow.getStyleClass().remove(1);
                     System.out.println(prevStyle);
                     PrevRow.getStyleClass().add(prevStyle);
@@ -211,12 +233,13 @@ public class CustomTable extends VBox {
                 }
 
                 count=0;
-                Pane selectedCon = (Pane)row.getChildren().get(0);
 
                 if (!toggle){
                     editContainer.setDisable(false);
                     delContainer.setDisable(false);
                     pinContainer.setDisable(false);
+                    OrderContainer.setDisable(false);
+
                     toggle=!toggle;
                     prevStyle = row.getStyleClass().get(1);
                     row.getStyleClass().remove(1);
@@ -226,6 +249,8 @@ public class CustomTable extends VBox {
                     editContainer.setDisable(true);
                     delContainer.setDisable(true);
                     pinContainer.setDisable(true);
+                    OrderContainer.setDisable(true);
+
                     row.getStyleClass().remove(1);
                     System.out.println(prevStyle);
                     row.getStyleClass().add(prevStyle);
@@ -269,26 +294,38 @@ public class CustomTable extends VBox {
 //                    }
 
 
-
-                    int  author_id = controller.getWrite(book.getBookId()).getAuthor_id();
-                    String author_name=controller.getAuthorById(author_id).getAuthor_name();
-                    TextField boo_id = (TextField) book_form.getChildren().get(2);
-                    boo_id.setText(book.getBookId());
-                    TextField name = (TextField) book_form.getChildren().get(4);
-                    name.setText(book.getBookName());
-//                HBox authorSection = (HBox)  book_form.getChildren().get(2);
-                    TextField Authorname = (TextField) book_form.getChildren().get(6);
-                    Authorname.setText(author_name);
-//                controller.ge
-                    TextField edit = (TextField) book_form.getChildren().get(8);
-                    edit.setText(book.getBookEditor());
-                    TextField qu = (TextField) book_form.getChildren().get(10);
-                    qu.setText(String.valueOf(book.getBookQuantity()));
-                    HBox buttons = (HBox) book_form.getChildren().get(11);
-                    Button submit = (Button)  buttons.getChildren().get(0);
-                    submit.setText("Update");
-                    Button reset = (Button)  buttons.getChildren().get(1);
-                    reset.setVisible(true);
+/////////////////////////////////////////////////change edit /////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////
+//                    int  author_id = controller.getWrite(book.getBookId()).getAuthor_id();
+//                    String author_name=controller.getAuthorById(author_id).getAuthor_name();
+//                    TextField boo_id = (TextField) book_form.getChildren().get(2);
+//                    boo_id.setText(book.getBookId());
+//                    TextField name = (TextField) book_form.getChildren().get(4);
+//                    name.setText(book.getBookName());
+////                HBox authorSection = (HBox)  book_form.getChildren().get(2);
+//                    ComboBox type1 = (ComboBox) book_form.getChildren().get(6);
+////                    qu.setText(String.valueOf(book.getBookQuantity()));
+//                    System.out.println(book.getType_int());
+//                    type1.getSelectionModel().select(book.getType_int());
+//                    TextArea shortDis = (TextArea) book_form.getChildren().get(8) ;
+//                    shortDis.setText(book.getShort_disc());
+//
+//                    TextArea longDis = (TextArea) book_form.getChildren().get(10) ;
+//                    longDis.setText(book.getLong_disc());
+//
+//                    TextField Authorname = (TextField) book_form.getChildren().get(6);
+//                    Authorname.setText(author_name);
+////                controller.ge
+//                    TextField edit = (TextField) book_form.getChildren().get(8);
+//                    edit.setText(book.getBookEditor());
+//                    TextField qu = (TextField) book_form.getChildren().get(10);
+//                    qu.setText(String.valueOf(book.getBookQuantity()));
+//
+//                    HBox buttons = (HBox) book_form.getChildren().get(book_form.getChildren().size()-1);
+//                    Button submit = (Button)  buttons.getChildren().get(0);
+//                    submit.setText("Update");
+//                    Button reset = (Button)  buttons.getChildren().get(1);
+//                    reset.setVisible(true);
 
             });
             if (i%2==0)
@@ -296,26 +333,40 @@ public class CustomTable extends VBox {
             else
                 row.getStyleClass().add("roweven");
             Label bid=new Label(book.getBookId());
-            bid.setPrefWidth(200);
-            row.getChildren().add(selected);
-            row.getChildren().add(spacer);
+            bid.setPrefWidth(150);
+//            row.getChildren().add(selected);
+//            row.getChildren().add(spacer);
             row.getChildren().add(bid);
             Label bn=new Label(book.getBookName());
-            bn.setPrefWidth(200);
+            bn.setPrefWidth(150);
             row.getChildren().add(bn);
-            Label bed=new Label(book.getBookEditor());
-            bed.setPrefWidth(200);
+            int authorId=controller.getWrite(book.getBookId()).getAuthor_id();
+            Label bed=new Label(controller.getAuthorById(authorId).getAuthor_name());
+            bed.setPrefWidth(150);
             row.getChildren().add(bed);
+            Label btype=new Label();
+            btype.setPrefWidth(150);
+            if(book.getType_int()==1)
+                btype.setText(bookType[0]);
+            else
+            if(book.getType_int()==2)
+                btype.setText(bookType[1]);
+            else
+                btype.setText(bookType[2]);
+            row.getChildren().add(btype);
             Label bq=new Label(String.valueOf(book.getBookQuantity()));
-            bq.setPrefWidth(200);
+            bq.setPrefWidth(150);
             int available_books = controller.getAviliableBooks(book.getBookId());
             Label reestLable = new Label(String.valueOf(available_books));
             if (available_books<=1){
                 reestLable.setTextFill(Paint.valueOf("#fc3232"));
             }
-            reestLable.setPrefWidth(200);
+            reestLable.setPrefWidth(150);
             row.getChildren().add(bq);
             row.getChildren().add(reestLable);
+            Label ord=new Label(String.valueOf(controller.order_num(book.getBookId())));
+            ord.setPrefWidth(150);
+            row.getChildren().add(ord);
             Label delete =new Label("delete");
             delete.setOnMouseClicked(e->{
                 deleted=true;
@@ -437,12 +488,45 @@ public class CustomTable extends VBox {
                 Label editbtn = (Label) editContainer.getChildren().get(1);
                 HBox delContainer = (HBox) options.getChildren().get(2);
                 HBox pinContainer = (HBox) options.getChildren().get(3);
-                Label messageOp = (Label) options.getChildren().get(4);
+                HBox BlockContainer = (HBox) options.getChildren().get(4);
+                Label messageOp = (Label) options.getChildren().get(5);
                 messageOp.setText("");
                 Label del = (Label) delContainer.getChildren().get(1);
                 count=0;
-//                Pane selectedCon = (Pane)row.getChildren().get(0);
+                FileInputStream blockfileInputStream;
+                lockUnlock_path ="/pics/padlock.png";
 
+
+
+                Label blockLable =(Label) BlockContainer.getChildren().get(1);
+                ImageView blockImage=(ImageView) BlockContainer.getChildren().get(0);
+                if(member.getId_sn()==2){
+                    lockUnlock_path="/pics/unlock.png";
+                    if(controller.getLanguage().equals("English")){
+                        blockLable.setText("Unblock");
+                    }
+                    else{
+                        blockLable.setText("Débloqué");
+                    }
+
+                }else{
+                    lockUnlock_path="/pics/padlock.png";
+                    if(controller.getLanguage().equals("English"))
+                        blockLable.setText("Block");
+                    else
+                        blockLable.setText("Bloqué");
+                }
+//                Pane selectedCon = (Pane)row.getChildren().get(0);
+                try {
+                    URL delsUrl= new URL(LoginPage.class.getResource(lockUnlock_path).toExternalForm());
+                    blockfileInputStream = new FileInputStream(delsUrl.getPath());
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                } catch (MalformedURLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                Image blockimage =new Image(blockfileInputStream);
+                blockImage.setImage(blockimage);
                 if(PrevRowM==null){
                     System.out.println(PrevRowM);
                     PrevRowM=row;
@@ -451,6 +535,7 @@ public class CustomTable extends VBox {
                     editContainer.setDisable(true);
                     delContainer.setDisable(true);
                     pinContainer.setDisable(true);
+                    BlockContainer.setDisable(true);
 
                     PrevRowM.getStyleClass().remove(1);
                     System.out.println(prevStyleM);
@@ -463,6 +548,7 @@ public class CustomTable extends VBox {
                     editContainer.setDisable(false);
                     delContainer.setDisable(false);
                     pinContainer.setDisable(false);
+                    BlockContainer.setDisable(false);
 
                     prevStyleM = row.getStyleClass().get(1);
                     System.out.println(row.getStyleClass().get(1));
@@ -474,6 +560,7 @@ public class CustomTable extends VBox {
                     editContainer.setDisable(true);
                     delContainer.setDisable(true);
                     pinContainer.setDisable(true);
+                    BlockContainer.setDisable(true);
 
                     row.getStyleClass().remove(1);
                     System.out.println(prevStyleM);

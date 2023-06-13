@@ -9,6 +9,7 @@ public interface IssueBookDAO {
     public IssueBook getIssueBook(int id) throws SQLException;
     public IssueBook getLastIssueBook() throws SQLException;
     public IssueBook getIssueBookByMemberID(int member_id) throws SQLException;
+    public List<IssueBook> getIssueBooksByMemberID(int member_id) throws SQLException;
     public void deletIssueBookBymember(int id) throws SQLException;
     public List<IssueBook> getAllIssues()throws SQLException;
     public List<IssueBook> Search(int member_id)throws SQLException;

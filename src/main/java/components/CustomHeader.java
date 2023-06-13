@@ -45,7 +45,11 @@ public class CustomHeader extends HBox {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        Image userImage = new Image("G:\\coding\\library-management-appliction-master\\src\\main\\resources\\pics\\user.png" );
+        String dir=System.getProperty("user.dir")+"\\src\\main\\resources\\pics\\user.png";
+        System.out.println("from dir"+ System.getProperty("user.dir")+"src\\main\\resources\\pics\\user.png");
+//        String Css= LoginPage.class.getResource("style.css").toExternalForm();
+//        Image userImage = new Image("G:\\coding\\library-management-appliction-master\\src\\main\\resources\\pics\\user.png" );
+        Image userImage = new Image(dir);
         ImageView imageView = new ImageView();
         imageView.setImage(userImage);
         imageView.setFitWidth(35);

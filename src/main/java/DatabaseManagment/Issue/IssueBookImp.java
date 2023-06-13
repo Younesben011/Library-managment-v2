@@ -94,6 +94,37 @@ public class IssueBookImp implements IssueBookDAO{
         }
         return issueBook;
     }
+
+    @Override
+    public List<IssueBook> getIssueBooksByMemberID(int member_id) throws SQLException {
+        List<IssueBook> issueBooks=new ArrayList<>();
+        IssueBook issueBook=null;
+        Connection connection = DatabaseConnection.getConnection();
+        String sql = "SELECT * FROM empreinte where No_Ab =? and DateRest_reel IS NULL";
+        PreparedStatement st = connection.prepareStatement(sql);
+        st.setInt(1,member_id);
+        ResultSet res =st.executeQuery();
+        while (res.next()){
+            int issue_id=res.getInt(1);
+            int library_num =res.getInt(4);
+            int member_id1=res.getInt(5);
+            int copy_id=res.getInt(6);
+            LocalDate issue_date= res.getDate(2).toLocalDate();
+            LocalDate return_date=res.getDate(3).toLocalDate();
+            LocalDate real_return_date;
+            try{
+                real_return_date=res.getDate(7).toLocalDate();
+            }catch (Exception ex){
+                real_return_date=null;
+            }
+            boolean notify=res.getBoolean(8);
+            issueBook=new IssueBook(issue_id,library_num,member_id1,copy_id,issue_date,return_date,real_return_date,notify);
+            issueBooks.add(issueBook);
+        }
+        return issueBooks;
+//        return null;
+    }
+
     public IssueBook getIssueBookByBookID(int  copy_id) throws SQLException {
         IssueBook issueBook=null;
         Connection connection = DatabaseConnection.getConnection();
